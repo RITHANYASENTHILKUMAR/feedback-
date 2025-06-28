@@ -1,0 +1,187 @@
+{
+  "name": "My workflow 3",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=feedback of student {{ $json.error }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": ""
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -1240,
+        -280
+      ],
+      "id": "ea3b18da-f76b-4423-8c51-22aa273e8369",
+      "name": "AI Agent",
+      "alwaysOutputData": true,
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "modelName": "models/learnlm-2.0-flash-experimental",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -1340,
+        20
+      ],
+      "id": "4524d031-80bd-45fd-9b4e-bc106e38f972",
+      "name": "Google Gemini Chat Model",
+      "notesInFlow": true,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "dGdmQAHez3vaRGS0",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      },
+      "notes": "feedback "
+    },
+    {
+      "parameters": {
+        "formTitle": "feeedback collector ",
+        "formDescription": "collects feedback from the students and send as a message",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "name",
+              "fieldType": "email",
+              "placeholder": "feedback",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -1800,
+        -260
+      ],
+      "id": "37d3fcc2-354c-4da4-b5a5-659c411bd0e0",
+      "name": "On form submission",
+      "webhookId": "acb103e9-a714-412a-94ec-9dc0f85e3acb"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1KkPgnY6BvnqcQoTFdUrhhhftGfdfthPeIk6PcYBSKuA/edit?usp=sharing",
+          "mode": "url"
+        },
+        "title": "n8n sheet",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -1500,
+        -240
+      ],
+      "id": "acbb1f1c-0087-40a4-99ce-6e27d122a32b",
+      "name": "Create sheet",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "retryOnFail": true,
+      "notesInFlow": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "HFtbjhYj1AAO0Xez",
+          "name": "Google Sheets account 2"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "sendTo": "rithu0256@gmail.com",
+        "subject": "feedback of student",
+        "message": "thank you for te intersting session",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -800,
+        -260
+      ],
+      "id": "6cf8269d-f7c4-4a81-a984-9f37bf6144b4",
+      "name": "Send a message",
+      "webhookId": "aee70bd3-3d56-4e11-95e5-827cffb32d9b",
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Vs2X0CwUbUNcBZ1W",
+          "name": "Gmail account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Create sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create sheet": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4280a31d-145b-467f-b869-019cfca44174",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "efd0fff792cbde588329fd61527e9833f05262887f8823eb1e5c54dcd42a5d1d"
+  },
+  "id": "jyDwUk4JBe60pJNn",
+  "tags": []
+}
